@@ -99,7 +99,7 @@ class AutomaticDataFeedActor(cluster: Cluster) extends Actor with ActorLogging w
   def stop(): Unit = if (context.children.isEmpty) context stop self
 }
 
-class DynamicDataFeedActor(cluster: Cluster) extends Actor with ActorLogging with ClientHelper {
+class DynamicDataFeedActor(cluster: Cluster) extends Actor with ActorLogging  {
   import akka.http.Http
   import FileFeedEvent._
   import context.dispatcher
@@ -123,7 +123,7 @@ class DynamicDataFeedActor(cluster: Cluster) extends Actor with ActorLogging wit
       toFiles(headers) map { files =>
         log.info(s"Received {}", files.mkString)
         context.actorOf(Props(new FileFeedActor(cluster))) ! FileStreamEnvelope(files:_*)
-        HttpResponse(200, entity = HttpEntity(MediaTypes.`text/html`, s"POST [$entity] successful."))
+        HttpResponse(200, entity = HttpEntity(MediaTypes.`text/html`, s"POST [${files.mkString}] successful."))
       } getOrElse
         HttpResponse(404, entity = s"Unknown resource '$entity'")
 
